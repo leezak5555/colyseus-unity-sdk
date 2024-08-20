@@ -348,21 +348,45 @@ namespace Colyseus
         }
 
         /// <summary>
-        ///     Method to add new message handlers to the room
-        /// </summary>
-        /// <param name="type">The type of message received</param>
-        /// <param name="handler"></param>
-        /// <typeparam name="MessageType">The type of object this message should respond with</typeparam>
-        public void OnMessage<MessageType>(string type, Action<MessageType> handler)
-        {
-            OnMessageHandlers.Add(type, new ColyseusMessageHandler<MessageType>
-            {
-                Action = handler
-            });
-        }
+		///     Method to add new message handler to the room
+		/// </summary>
+		/// <param name="type">The type of message received</param>
+		/// <param name="handler"></param>
+		/// <typeparam name="MessageType">The type of object this message should respond with</typeparam>
+		public void OnMessage<MessageType>(string type, Action<MessageType> handler)
+		{
+		    OnMessageHandlers.Add(type, new ColyseusMessageHandler<MessageType>
+		    {
+		        Action = handler
+		    });
+		}
+		/// <summary>
+		///     Method to unregister an existing message handler from the room. This is useful if you have message handlers on objects that respawn
+		/// </summary>
+		/// <param name="type">The type of the existing message</param>
+		public void UnregisterMessage(string type)
+		{
+		    // Remove the handler for the given type if it exists
+		    if (OnMessageHandlers.ContainsKey(type))
+		        OnMessageHandlers.Remove(type);
+		}
+		/// <summary>
+		///     A Safe method to add new message handler to the room. It Unregisters handlers listeners if any.
+		/// </summary>
+		/// <param name="type">The type of message received</param>
+		/// <param name="handler"></param>
+		/// <typeparam name="MessageType">The type of object this message should respond with</typeparam>
+		public void SafeOnMessage<MessageType>(string type, Action<MessageType> handler)
+		{
+		    UnregisterMessage(type);
+		    OnMessageHandlers.Add(type, new ColyseusMessageHandler<MessageType>
+		    {
+		        Action = handler
+		    });
+		}
 
         /// <summary>
-        ///     Method to add new message handlers to the room
+        ///     Method to add new message handler to the room
         /// </summary>
         /// <param name="type">The type of message received</param>
         /// <param name="handler"></param>
@@ -376,7 +400,7 @@ namespace Colyseus
         }
 
         /// <summary>
-        ///     Method to add new message handlers to the room
+        ///     Method to add new message handler to the room
         /// </summary>
         /// <param name="handler"></param>
         /// <typeparam name="MessageType">The type of object this message should respond with</typeparam>
